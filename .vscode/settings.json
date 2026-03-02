@@ -1,10 +1,3 @@
 {
-  "sonarlint.pathToCompileCommands": "${workspaceFolder}\\build\\Debug\\compile_commands.json",
-  "cmake.debugConfig": {
-    "type": "lldb",
-    "name": "LLDB Debugger"
-  }
-  // "clangd.arguments": [
-  //   "--compile-commands-dir=${workspaceFolder}/build/Debug/"
-  // ]
+  "clangd.arguments": ["--compile-commands-dir=out/build/x64-debug"]
 }

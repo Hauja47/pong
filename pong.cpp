@@ -1,39 +1,26 @@
-
-#include "ball.h"
-#include "bat.h"
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Text.hpp>
-#include <SFML/Window/Keyboard.hpp>
-#include <SFML/Window/VideoMode.hpp>
-#include <SFML/Window/WindowStyle.hpp>
-#include <sstream>
-
-#define SCREEN_WIDTH 1920
-#define SCREEN_HEIGHT 1024
+﻿#include "pong.h"
 
 using namespace sf;
 
 int main() {
-  VideoMode vm(SCREEN_WIDTH, SCREEN_HEIGHT);
+  VideoMode vm({SCREEN_WIDTH, SCREEN_HEIGHT});
   RenderWindow window(vm, "Pong", Style::Default);
 
   int score = 0;
   int lives = 3;
 
+  bool isCollide = false;
+
   Bat bat(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 20);
 
   Ball ball(SCREEN_WIDTH / 2, 0);
 
-  Text hud;
+  Font font("assets/fonts/DepartureMono-Regular.otf");
 
-  Font font;
-  font.loadFromFile("assets/fonts/DepartureMono-Regular.otf");
-
-  hud.setFont(font);
-  hud.setCharacterSize(75);
+  Text hud(font, "");
+  hud.setCharacterSize(static_cast<int>(SCREEN_HEIGHT * 0.08));
   hud.setFillColor(Color::White);
-  hud.setPosition(20, 20);
+  hud.setPosition({20, 20});
 
   Clock clock;
 
@@ -44,25 +31,28 @@ int main() {
     ****************************
     ****************************
     */
-    Event event;
-    while (window.pollEvent(event)) {
-      if (event.type == Event::Closed) {
+    while (const std::optional event = window.pollEvent()) {
+      if (event->is<Event::Closed>()) {
         window.close();
+      } else if (const auto *keyPressed = event->getIf<Event::KeyPressed>()) {
+        if (keyPressed->scancode == Keyboard::Scancode::Escape)
+          window.close();
       }
     }
 
-    if (Keyboard::isKeyPressed(Keyboard::Escape)) {
-      window.close();
-    }
-
-    if (Keyboard::isKeyPressed(Keyboard::A)) {
-      bat.moveLeft();
+    if (Keyboard::isKeyPressed(Keyboard::Scancode::A) ||
+        Keyboard::isKeyPressed(Keyboard::Scancode::Left)) {
+      if (bat.getGlobalBounds().position.x > 0)
+        bat.moveLeft();
     } else {
       bat.stopLeft();
     }
 
-    if (Keyboard::isKeyPressed(Keyboard::D)) {
-      bat.moveRight();
+    if (Keyboard::isKeyPressed(Keyboard::Scancode::D) ||
+        Keyboard::isKeyPressed(Keyboard::Scancode::Right)) {
+      if (bat.getGlobalBounds().position.x + bat.getGlobalBounds().size.x <
+          static_cast<float>(window.getSize().x))
+        bat.moveRight();
     } else {
       bat.stopRight();
     }
@@ -82,7 +72,8 @@ int main() {
     ss << "Score: " << score << " | Live: " << lives;
     hud.setString(ss.str());
 
-    if (ball.getPosition().top > window.getSize().y) {
+    if (ball.getGlobalBounds().position.y >
+        static_cast<float>(window.getSize().y)) {
       ball.reboundBottom();
 
       lives--;
@@ -93,17 +84,18 @@ int main() {
       }
     }
 
-    if (ball.getPosition().top < 0) {
+    if (ball.getGlobalBounds().position.y < 0) {
       ball.reboundBatOrTop();
     }
 
-    if (ball.getPosition().left < 0 ||
-        ball.getPosition().left + ball.getPosition().width >
-            window.getSize().x) {
+    if (ball.getGlobalBounds().position.x < 0 ||
+        ball.getGlobalBounds().position.x + ball.getGlobalBounds().size.x >
+            static_cast<float>(window.getSize().x)) {
       ball.reboundSides();
     }
 
-    if (ball.getPosition().intersects(bat.getPosition())) {
+    if (const std::optional intersection =
+            ball.getGlobalBounds().findIntersection(bat.getGlobalBounds())) {
       score++;
       ball.reboundBatOrTop();
     }

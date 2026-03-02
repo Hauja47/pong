@@ -14,7 +14,7 @@ private:
 
 public:
   Ball(float startX, float startY);
-  sf::FloatRect getPosition();
+  sf::FloatRect getGlobalBounds();
   sf::RectangleShape getShape();
   float getXVelocity();
   void reboundSides();

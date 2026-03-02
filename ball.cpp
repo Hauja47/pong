@@ -1,6 +1,4 @@
 #include "ball.h"
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/System/Vector2.hpp>
 
 Ball::Ball(float startX, float startY) {
   this->m_position.x = startX;
@@ -10,7 +8,7 @@ Ball::Ball(float startX, float startY) {
   this->m_shape.setPosition(this->m_position);
 }
 
-sf::FloatRect Ball::getPosition() { return this->m_shape.getGlobalBounds(); }
+sf::FloatRect Ball::getGlobalBounds() { return this->m_shape.getGlobalBounds(); }
 sf::RectangleShape Ball::getShape() { return this->m_shape; }
 float Ball::getXVelocity() { return this->m_directionX; }
 void Ball::reboundSides() { this->m_directionX = -this->m_directionX; }

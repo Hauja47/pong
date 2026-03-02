@@ -1,6 +1,4 @@
 #include "bat.h"
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/System/Vector2.hpp>
 
 Bat::Bat(float startX, float startY) {
   this->m_position.x = startX;
@@ -10,7 +8,7 @@ Bat::Bat(float startX, float startY) {
   this->m_shape.setPosition(m_position);
 }
 
-sf::FloatRect Bat::getPosition() { return this->m_shape.getGlobalBounds(); }
+sf::FloatRect Bat::getGlobalBounds() { return this->m_shape.getGlobalBounds(); }
 
 sf::RectangleShape Bat::getShape() { return m_shape; }
 
