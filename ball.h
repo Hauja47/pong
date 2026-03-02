@@ -16,6 +16,8 @@ public:
   Ball(float startX, float startY);
   sf::FloatRect getGlobalBounds();
   sf::RectangleShape getShape();
+  sf::Vector2f getPosition();
+  sf::Vector2f getSize();
   float getXVelocity();
   void reboundSides();
   void reboundBatOrTop();

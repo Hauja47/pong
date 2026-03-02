@@ -16,6 +16,8 @@ public:
   Bat(float startX, float startY);
   sf::FloatRect getGlobalBounds();
   sf::RectangleShape getShape();
+  sf::Vector2f getPosition();
+  sf::Vector2f getSize();
   void moveLeft();
   void moveRight();
   void stopLeft();

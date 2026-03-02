@@ -1,4 +1,5 @@
 ﻿#include "pong.h"
+#include <iostream>
 
 using namespace sf;
 
@@ -9,7 +10,7 @@ int main() {
   int score = 0;
   int lives = 3;
 
-  bool isCollide = false;
+  bool isCollided = false;
 
   Bat bat(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 20);
 
@@ -18,7 +19,7 @@ int main() {
   Font font("assets/fonts/DepartureMono-Regular.otf");
 
   Text hud(font, "");
-  hud.setCharacterSize(static_cast<int>(SCREEN_HEIGHT * 0.08));
+  hud.setCharacterSize(static_cast<int>(SCREEN_HEIGHT * 0.04));
   hud.setFillColor(Color::White);
   hud.setPosition({20, 20});
 
@@ -42,17 +43,15 @@ int main() {
 
     if (Keyboard::isKeyPressed(Keyboard::Scancode::A) ||
         Keyboard::isKeyPressed(Keyboard::Scancode::Left)) {
-      if (bat.getGlobalBounds().position.x > 0)
-        bat.moveLeft();
+      bat.moveLeft();
     } else {
       bat.stopLeft();
     }
 
     if (Keyboard::isKeyPressed(Keyboard::Scancode::D) ||
         Keyboard::isKeyPressed(Keyboard::Scancode::Right)) {
-      if (bat.getGlobalBounds().position.x + bat.getGlobalBounds().size.x <
-          static_cast<float>(window.getSize().x))
-        bat.moveRight();
+
+      bat.moveRight();
     } else {
       bat.stopRight();
     }
@@ -96,8 +95,16 @@ int main() {
 
     if (const std::optional intersection =
             ball.getGlobalBounds().findIntersection(bat.getGlobalBounds())) {
-      score++;
+
+      if (!isCollided &&
+          ball.getPosition().y >= bat.getPosition().y - ball.getSize().y) {
+        score++;
+        isCollided = true;
+      }
+
       ball.reboundBatOrTop();
+    } else {
+      isCollided = false;
     }
 
     /*
